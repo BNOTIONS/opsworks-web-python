@@ -84,7 +84,7 @@ define :django_configure do
       
       supervisor_service application do
         action :enable
-        environment gunicorn["environment"] || {}
+        environment deploy[:environment] || gunicorn["environment"] || {}
         command gunicorn_command
         directory ::File.join(deploy[:deploy_to], "current")
         autostart true
