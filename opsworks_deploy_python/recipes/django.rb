@@ -53,9 +53,7 @@ node[:deploy].each do |application, deploy|
       cwd ::File.join(deploy[:deploy_to], 'current', deploy[:app_module])
       user deploy[:user]
       group deploy[:group]
-      deploy[:environment].each do |key, value|
-        environment key => value
-      end
+      environment deploy[:environment]
     end
   end
 
@@ -66,9 +64,7 @@ node[:deploy].each do |application, deploy|
       cwd ::File.join(deploy[:deploy_to], 'current', deploy[:app_module])
       user deploy[:user]
       group deploy[:group]
-      deploy[:environment].each do |key, value|
-        environment key => value
-      end
+      environment deploy[:environment]
     end
   end
 end
