@@ -50,7 +50,7 @@ node[:deploy].each do |application, deploy|
   if deploy["migrate"] && deploy["migration_command"]
       migration_command = "#{::File.join(deploy["venv"], "bin", "python")} #{deploy["migration_command"]}"
     execute migration_command do
-      cwd ::File.join(deploy[:deploy_to], 'current')
+      cwd ::File.join(deploy[:deploy_to], 'current', deploy[:app_module])
       user deploy[:user]
       group deploy[:group]
     end
@@ -60,7 +60,7 @@ node[:deploy].each do |application, deploy|
   if deploy["django_collect_static"]
     cmd = deploy["django_collect_static"].is_a?(String) ? deploy["django_collect_static"] : "collectstatic --noinput"
     execute "#{::File.join(node[:deploy][application]["venv"], "bin", "python")} manage.py #{cmd}" do
-      cwd ::File.join(deploy[:deploy_to], 'current')
+      cwd ::File.join(deploy[:deploy_to], 'current', deploy[:app_module])
       user deploy[:user]
       group deploy[:group]
     end
