@@ -65,7 +65,7 @@ define :django_configure do
       base_command = "#{::File.join(deploy[:deploy_to], 'shared', 'env', 'bin', 'gunicorn')} --pythonpath=#{::File.join(deploy[:deploy_to], 'current', deploy[:app_module])}"
       
       gunicorn_cfg = ::File.join(deploy[:deploy_to], 'shared', 'gunicorn_config.py')
-      gunicorn_command = "#{base_command} -c #{gunicorn_cfg} wsgi:application"
+      gunicorn_command = "#{base_command} --error-logfile=- --access-logfile=- -c #{gunicorn_cfg} wsgi:application"
       
       gunicorn_config gunicorn_command do
         owner deploy[:user]
