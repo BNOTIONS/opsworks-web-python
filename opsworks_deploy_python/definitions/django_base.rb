@@ -139,7 +139,7 @@ define :django_configure do
         create    '644 root adm'
         sharedscripts true
         enable true
-        postrotate "/bin/bash /etc/#{application}/upload_log_to_s3.sh log.1"
+        postrotate "/bin/bash /etc/#{application}/archive_logs.sh log.1"
       end
     end
     
