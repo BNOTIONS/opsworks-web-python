@@ -100,6 +100,12 @@ define :django_configure do
       end
 
       s3rotatescript = "/etc/#{application}/archive_logs.sh"
+      s3rotatedir = "/etc/#{application}"
+
+      directory s3rotatedir do
+        owner "root"
+        group "root"
+      end
 
       template s3rotatescript do
         source "archive_logs.sh.erb"
