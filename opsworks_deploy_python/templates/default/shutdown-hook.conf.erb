@@ -1,0 +1,5 @@
+description "run at shutdown"
+
+start on starting rc
+task
+exec /bin/bash /etc/<%= @application %>/archive_logs.sh log

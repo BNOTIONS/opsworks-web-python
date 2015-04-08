@@ -62,10 +62,11 @@ define :django_configure do
     
     if gunicorn["enabled"]
       include_recipe 'supervisor'
+      include_recipe 'logrotate'
       base_command = "#{::File.join(deploy[:deploy_to], 'shared', 'env', 'bin', 'gunicorn')} --pythonpath=#{::File.join(deploy[:deploy_to], 'current', deploy[:app_module])}"
       
       gunicorn_cfg = ::File.join(deploy[:deploy_to], 'shared', 'gunicorn_config.py')
-      gunicorn_command = "#{base_command} --error-logfile=- --access-logfile=- -c #{gunicorn_cfg} wsgi:application"
+      gunicorn_command = "#{base_command} --error-logfile=- --access-logfile=- --access-logformat='%%({X-Forwarded-For}i)s %%(l)s %%(u)s %%(t)s \"%%(r)s\" %%(s)s %%(b)s \"%%(f)s\" \"%%(a)s\"' -c #{gunicorn_cfg} wsgi:application"
       
       gunicorn_config gunicorn_command do
         owner deploy[:user]
@@ -96,6 +97,41 @@ define :django_configure do
         only_if "sleep 60"
         subscribes :restart,  "gunicorn_config[#{gunicorn_command}]", :delayed
         subscribes :restart,  "template[#{django_cfg}]", :delayed
+      end
+
+      s3rotatescript = "/etc/#{application}/archive_logs.sh"
+
+      template s3rotatescript do
+        source "archive_logs.sh.erb"
+        cookbook deploy["django_settings_cookbook"] || 'opsworks_deploy_python'
+        owner "root"
+        group "root"
+        mode 0755
+        variables Hash.new
+        variables.update application
+      end
+
+      shutdownhook = "/etc/init/shutdown-hook.conf"
+
+      template shutdownhook do
+        source "shutdown-hook.conf.erb"
+        cookbook deploy["django_settings_cookbook"] || 'opsworks_deploy_python'
+        owner "root"
+        group "root"
+        mode 0644
+        variables Hash.new
+        variables.update application
+      end
+
+      logrotate_app application do
+        path      '/var/log/supervisor/*.log'
+        options   ['missingok', 'delaycompress', 'notifempty']
+        frequency 'daily'
+        rotate    30
+        create    '644 root adm'
+        sharedscripts true
+        enable true
+        postrotate '/bin/bash /etc/application/upload_log_to_s3.sh log.1'
       end
     end
     

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+log_file_ext=$1
+
+gzip -c /var/log/supervisor/*.$log_file_ext > /tmp/log.gz
+
+aws s3 cp /tmp/log.gz s3://<%= @application %>-worm/logs/$(date +%Y-%m-%dT%H:%M:%SZ).log.gz

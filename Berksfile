@@ -16,6 +16,7 @@ cookbook 'ulimit', '0.3.2'
 cookbook 'line', '~> 0.5.1'
 cookbook 'python', '1.4.6'
 cookbook 'runit', '1.5.10'
+cookbook 'logrotate', '~> 1.9.1'
 cookbook 'rsyslog'
 
 # Uncomment the items below for testing deployments with Vagrant
