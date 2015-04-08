@@ -107,8 +107,9 @@ define :django_configure do
         owner "root"
         group "root"
         mode 0755
-        variables Hash.new
-        variables.update application
+        variables({
+          :application => application
+        })
       end
 
       shutdownhook = "/etc/init/shutdown-hook.conf"
@@ -119,8 +120,9 @@ define :django_configure do
         owner "root"
         group "root"
         mode 0644
-        variables Hash.new
-        variables.update application
+        variables({
+          :application => application
+        })
       end
 
       logrotate_app application do
