@@ -15,4 +15,9 @@ node[:deploy].each do |application, deploy|
     deploy_data deploy
     app_name application
   end
+
+  system_base_setup do
+    deploy_data deploy
+    app_name application
+  end
 end
