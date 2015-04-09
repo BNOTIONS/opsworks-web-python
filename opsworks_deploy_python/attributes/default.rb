@@ -11,4 +11,4 @@ node.default["deploy_python"]["os_packages"] = []
 node.default["deploy_python"]["venv_options"] = '--no-site-packages'
 
 node.default['apt']['unattended_upgrades']['enable']
-node.default['apt']['unattended_upgrades']['allowed_origins']['Ubuntu trusty-security']
+node.default['apt']['unattended_upgrades']['allowed_origins'] = ['Ubuntu trusty-security']
