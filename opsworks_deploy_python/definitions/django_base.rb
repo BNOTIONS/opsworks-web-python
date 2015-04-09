@@ -49,7 +49,7 @@ define :django_configure do
       cookbook deploy["django_settings_cookbook"] || 'opsworks_deploy_python'
       owner deploy[:user]
       group deploy[:group]
-      mode 0644
+      mode 0640
       variables Hash.new
       variables.update deploy
       variables.update :django_database => Helpers.django_setting(deploy, 'database', node)
@@ -63,6 +63,12 @@ define :django_configure do
     if gunicorn["enabled"]
       include_recipe 'supervisor'
       include_recipe 'logrotate'
+
+      directory s3rotatedir do
+        owner "deploy"
+        group "root"
+      end
+
       base_command = "#{::File.join(deploy[:deploy_to], 'shared', 'env', 'bin', 'gunicorn')} --pythonpath=#{::File.join(deploy[:deploy_to], 'current', deploy[:app_module])}"
       
       gunicorn_cfg = ::File.join(deploy[:deploy_to], 'shared', 'gunicorn_config.py')
@@ -136,7 +142,7 @@ define :django_configure do
         options   ['missingok', 'delaycompress', 'notifempty']
         frequency 'daily'
         rotate    30
-        create    '644 root adm'
+        create    "640 deploy[:user] deploy[:user]"
         sharedscripts true
         enable true
         postrotate "/bin/bash /etc/#{application}/archive_logs.sh log.1"
