@@ -67,14 +67,21 @@ define :django_configure do
       s3rotatedir = "/etc/#{application}"
 
       directory s3rotatedir do
-        owner "deploy"
+        owner "root"
         group "root"
+      end
+
+      applogdir = "/var/log/#{application}"
+
+      directory applogdir do
+        owner deploy[:user]
+        group deploy[:user]
       end
 
       base_command = "#{::File.join(deploy[:deploy_to], 'shared', 'env', 'bin', 'gunicorn')} --pythonpath=#{::File.join(deploy[:deploy_to], 'current', deploy[:app_module])}"
       
       gunicorn_cfg = ::File.join(deploy[:deploy_to], 'shared', 'gunicorn_config.py')
-      gunicorn_command = "#{base_command} --error-logfile=- --access-logfile=/var/log/supervisor/#{application}_access.log --access-logformat='%%({X-Forwarded-For}i)s %%(l)s %%(u)s %%(t)s \"%%(r)s\" %%(s)s %%(b)s \"%%(f)s\" \"%%(a)s\"' -c #{gunicorn_cfg} wsgi:application"
+      gunicorn_command = "#{base_command} --error-logfile=/var/log/#{application}/error.log --access-logfile=/var/log/#{application}/access.log --access-logformat='%%({X-Forwarded-For}i)s %%(l)s %%(u)s %%(t)s \"%%(r)s\" %%(s)s %%(b)s \"%%(f)s\" \"%%(a)s\"' -c #{gunicorn_cfg} wsgi:application"
       
       gunicorn_config gunicorn_command do
         owner deploy[:user]
@@ -107,14 +114,10 @@ define :django_configure do
         subscribes :restart,  "template[#{django_cfg}]", :delayed
       end
 
-      s3rotatescript = "/etc/#{application}/archive_logs.sh"
+      approtatescript = "/etc/#{application}/archive_#{application}_logs.sh"
+      superrotatescript = "/etc/#{application}/archive_supervisor_logs.sh"
 
-      directory s3rotatedir do
-        owner "root"
-        group "root"
-      end
-
-      template s3rotatescript do
+      template approtatescript do
         source "archive_logs.sh.erb"
         cookbook deploy["django_settings_cookbook"] || 'opsworks_deploy_python'
         owner "root"
@@ -122,6 +125,17 @@ define :django_configure do
         mode 0755
         variables({
           :application => application
+        })
+      end
+
+      template superrotatescript do
+        source "archive_logs.sh.erb"
+        cookbook deploy["django_settings_cookbook"] || 'opsworks_deploy_python'
+        owner "root"
+        group "root"
+        mode 0755
+        variables({
+          :application => "supervisor"
         })
       end
 
@@ -138,15 +152,26 @@ define :django_configure do
         })
       end
 
-      logrotate_app application do
+      logrotate_app "supervisor" do
         path      '/var/log/supervisor/*.log'
         options   ['missingok', 'delaycompress', 'notifempty']
         frequency 'daily'
         rotate    30
-        create    "640 deploy[:user] deploy[:user]"
+        create    "640 root root"
         sharedscripts true
         enable true
-        postrotate "/bin/bash /etc/#{application}/archive_logs.sh log.1"
+        postrotate "/bin/bash /etc/#{application}/archive_supervisor_logs.sh log.1"
+      end
+
+      logrotate_app application do
+        path      "/var/log/#{application}/*.log"
+        options   ['missingok', 'delaycompress', 'notifempty']
+        frequency 'daily'
+        rotate    30
+        create    "640 #{deploy[:user]} #{deploy[:user]}"
+        sharedscripts true
+        enable true
+        postrotate "/bin/bash /etc/#{application}/archive_#{application}_logs.sh log.1"
       end
     end
     
