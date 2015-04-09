@@ -1,7 +1,8 @@
 #!/bin/bash
 
+iid=$(/use/bin/ec2metadata --instance-id)
 log_file_ext=$1
 
 gzip -c /var/log/<%= @logdir %>/*.$log_file_ext > /tmp/log.gz
 
-aws s3 cp --sse /tmp/log.gz s3://<%= @application %>-worm/<%= @logdir %>/$(date +%Y-%m-%dT%H:%M:%SZ).log.gz
+/usr/local/bin/aws s3 cp --sse /tmp/log.gz s3://<%= @application %>-worm/${iid}/<%= @logdir %>/$(date +%Y-%m-%dT%H:%M:%SZ).log.gz
