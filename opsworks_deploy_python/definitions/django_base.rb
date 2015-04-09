@@ -124,7 +124,8 @@ define :django_configure do
         group "root"
         mode 0755
         variables({
-          :application => application
+          :application => application,
+          :logdir => application
         })
       end
 
@@ -135,7 +136,8 @@ define :django_configure do
         group "root"
         mode 0755
         variables({
-          :application => "supervisor"
+          :application => application,
+          :logdir => "supervisor"
         })
       end
 
