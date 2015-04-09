@@ -9,4 +9,8 @@ define :system_base_setup do
     key 'http://ossec.wazuh.com/repos/apt/conf/ossec-key.gpg.key'
     action :add
   end
+
+  apt_package "ossec-agent" do
+    action :install
+  end
 end
