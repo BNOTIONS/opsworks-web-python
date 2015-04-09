@@ -10,7 +10,7 @@ define :system_base_setup do
     action :add
   end
 
-  apt_package "ossec-agent" do
+  apt_package "ossec-hids-agent" do
     action :install
   end
 end
