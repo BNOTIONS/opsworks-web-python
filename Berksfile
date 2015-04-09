@@ -6,18 +6,18 @@ cookbook "traceview", github: 'Optaros/tracelytics-chef', ref: 'e0f1b2bd7b729569
 # We want to be explicit, since we don't explicitly include our
 # packages, except when testing
 cookbook 'gunicorn', '1.1.2'
-cookbook 'build-essential', '1.4.2'
-cookbook 'apt', '2.3.8'
+cookbook 'build-essential', '~> 2.2.2'
+cookbook 'apt', '~> 2.7.0'
 cookbook 'yum', '3.1.2'
 cookbook 'yum-epel', '0.3.4'
-cookbook 'git', '3.1.0'
+cookbook 'git', '~> 4.1.0'
 cookbook 'sqlite', '1.0.0'
 cookbook 'ulimit', '0.3.2'
 cookbook 'line', '~> 0.5.1'
 cookbook 'python', '1.4.6'
 cookbook 'runit', '1.5.10'
 cookbook 'logrotate', '~> 1.9.1'
-cookbook 'rsyslog'
+cookbook 'rsyslog', '~> 1.15.0'
 
 # Uncomment the items below for testing deployments with Vagrant
 
