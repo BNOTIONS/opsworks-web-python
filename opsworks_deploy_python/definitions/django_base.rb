@@ -170,7 +170,7 @@ define :django_configure do
         options   ['missingok', 'delaycompress', 'notifempty']
         frequency 'daily'
         rotate    30
-        create    "640 #{deploy[:user]} #{deploy[:user]}"
+        create    "640 #{deploy[:user]} root"
         sharedscripts true
         enable true
         postrotate "/bin/bash /etc/#{application}/archive_#{application}_logs.sh log.1"
