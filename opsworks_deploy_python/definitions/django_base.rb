@@ -64,6 +64,8 @@ define :django_configure do
       include_recipe 'supervisor'
       include_recipe 'logrotate'
 
+      s3rotatedir = "/etc/#{application}"
+
       directory s3rotatedir do
         owner "deploy"
         group "root"
@@ -106,7 +108,6 @@ define :django_configure do
       end
 
       s3rotatescript = "/etc/#{application}/archive_logs.sh"
-      s3rotatedir = "/etc/#{application}"
 
       directory s3rotatedir do
         owner "root"
