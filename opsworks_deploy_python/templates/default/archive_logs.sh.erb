@@ -1,6 +1,6 @@
 #!/bin/bash
 
-iid=$(/use/bin/ec2metadata --instance-id)
+iid=$(/usr/bin/ec2metadata --instance-id)
 log_file_ext=$1
 
 gzip -c /var/log/<%= @logdir %>/*.$log_file_ext > /tmp/log.gz

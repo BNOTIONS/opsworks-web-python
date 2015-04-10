@@ -173,7 +173,7 @@ define :django_configure do
         create    "640 #{deploy[:user]} root"
         sharedscripts true
         enable true
-        postrotate "/bin/bash /etc/#{application}/archive_#{application}_logs.sh log.1"
+        postrotate "/bin/kill -USR1 $(/usr/local/bin/supervisorctl pid #{application}) || /bin/bash /etc/#{application}/archive_#{application}_logs.sh log.1"
       end
     end
     
