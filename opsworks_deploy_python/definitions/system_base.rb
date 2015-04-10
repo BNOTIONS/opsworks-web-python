@@ -2,6 +2,8 @@ define :system_base_setup do
   deploy = params[:deploy_data]
   application = params[:app_name]
   
+  execute "/usr/bin/easy_install awscli"
+
   apt_repository 'ossec' do
     uri 'http://ossec.wazuh.com/repos/apt/ubuntu'
     components ['main']
