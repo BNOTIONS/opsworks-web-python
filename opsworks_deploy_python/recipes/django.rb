@@ -67,4 +67,15 @@ node[:deploy].each do |application, deploy|
       environment deploy[:environment]
     end
   end
+
+  # compilemessages
+  if deploy["django_compilemessages"]
+    cmd = deploy["django_compilemessages"].is_a?(String) ? deploy["django_compilemessages"] : "compilemessages"
+    execute "#{::File.join(node[:deploy][application]["venv"], "bin", "python")} manage.py #{cmd}" do
+      cwd ::File.join(deploy[:deploy_to], 'current', deploy[:app_module])
+      user deploy[:user]
+      group deploy[:group]
+      environment deploy[:environment]
+    end
+  end
 end
