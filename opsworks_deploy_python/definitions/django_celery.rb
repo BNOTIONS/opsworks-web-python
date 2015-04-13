@@ -59,6 +59,7 @@ define :django_djcelery do
       subscribes :restart, "template[#{::File.join(deploy[:deploy_to], 'current', Helpers.django_setting(deploy, 'settings_file', node))}]", :delayed
     end
   end
+  execute "chmod 640 -R /etc/supervisor.d"
 end
 
 define :django_celery do
