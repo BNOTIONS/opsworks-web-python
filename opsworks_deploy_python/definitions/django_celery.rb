@@ -91,5 +91,5 @@ define :django_celery do
     end
   end
 
-  execute "chown 640 -R /etc/supervisor.d"
+  execute "chmod 640 -R /etc/supervisor.d"
 end

@@ -114,7 +114,7 @@ define :django_configure do
         subscribes :restart,  "template[#{django_cfg}]", :delayed
       end
 
-      execute "chown 640 -R /etc/supervisor.d"
+      execute "chmod 640 -R /etc/supervisor.d"
 
       approtatescript = "/etc/#{application}/archive_#{application}_logs.sh"
       superrotatescript = "/etc/#{application}/archive_supervisor_logs.sh"
